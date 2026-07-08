@@ -14,3 +14,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.post("/users/")
+def create_user(name: str, email: EmailStr, date_of_birth: date, phone_number: str = None, db: Session = Depends(get_db)):
+    db_user = models.User(name=name, email=email, date_of_birth=date_of_birth, phone_number=phone_number)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
